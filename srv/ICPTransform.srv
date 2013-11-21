@@ -1,5 +1,6 @@
 sensor_msgs/PointCloud2 pc1
 sensor_msgs/PointCloud2 pc2
+geometry_msgs/Pose guess
 ----
 geometry_msgs/Pose pose
 

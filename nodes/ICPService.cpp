@@ -20,11 +20,18 @@ bool findICPTransform (icp_service::ICPTransform::Request &req,
   pcl::fromROSMsg(req.pc1, *cloud_in);
   pcl::fromROSMsg(req.pc2, *cloud_out);
 
+  Eigen::Affine3d guess_tfm;
+  tf::poseMsgToEigen(req.guess,guess_tfm);
+  Eigen::Matrix4f icp_guess;
+  icp_guess.block(0,0,3,3) = guess_tfm.linear().cast<float>().transpose();
+  icp_guess.block(0,3,3,1) = guess_tfm.translation().cast<float>();
+  
+
   pcl::IterativeClosestPoint<ColorPoint, ColorPoint> icp;
   icp.setInputCloud(cloud_in);
   icp.setInputTarget(cloud_out);
   ColorCloud Final;
-  icp.align(Final);
+  icp.align(Final, icp_guess);
 
   std::cout << "has converged:" << icp.hasConverged() << " score: " << icp.getFitnessScore() << std::endl;
 

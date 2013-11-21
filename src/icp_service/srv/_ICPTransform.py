@@ -4,15 +4,17 @@ python3 = True if sys.hexversion > 0x03000000 else False
 import genpy
 import struct
 
+import geometry_msgs.msg
 import std_msgs.msg
 import sensor_msgs.msg
 
 class ICPTransformRequest(genpy.Message):
-  _md5sum = "58142df541fcea712ea67343006c687f"
+  _md5sum = "c7d659258922e702c3c485c361a9c684"
   _type = "icp_service/ICPTransformRequest"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """sensor_msgs/PointCloud2 pc1
 sensor_msgs/PointCloud2 pc2
+geometry_msgs/Pose guess
 
 ================================================================================
 MSG: sensor_msgs/PointCloud2
@@ -80,9 +82,31 @@ uint32 offset    # Offset from start of point struct
 uint8  datatype  # Datatype enumeration, see above
 uint32 count     # How many elements in the field
 
+================================================================================
+MSG: geometry_msgs/Pose
+# A representation of pose in free space, composed of postion and orientation. 
+Point position
+Quaternion orientation
+
+================================================================================
+MSG: geometry_msgs/Point
+# This contains the position of a point in free space
+float64 x
+float64 y
+float64 z
+
+================================================================================
+MSG: geometry_msgs/Quaternion
+# This represents an orientation in free space in quaternion form.
+
+float64 x
+float64 y
+float64 z
+float64 w
+
 """
-  __slots__ = ['pc1','pc2']
-  _slot_types = ['sensor_msgs/PointCloud2','sensor_msgs/PointCloud2']
+  __slots__ = ['pc1','pc2','guess']
+  _slot_types = ['sensor_msgs/PointCloud2','sensor_msgs/PointCloud2','geometry_msgs/Pose']
 
   def __init__(self, *args, **kwds):
     """
@@ -92,7 +116,7 @@ uint32 count     # How many elements in the field
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       pc1,pc2
+       pc1,pc2,guess
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -105,9 +129,12 @@ uint32 count     # How many elements in the field
         self.pc1 = sensor_msgs.msg.PointCloud2()
       if self.pc2 is None:
         self.pc2 = sensor_msgs.msg.PointCloud2()
+      if self.guess is None:
+        self.guess = geometry_msgs.msg.Pose()
     else:
       self.pc1 = sensor_msgs.msg.PointCloud2()
       self.pc2 = sensor_msgs.msg.PointCloud2()
+      self.guess = geometry_msgs.msg.Pose()
 
   def _get_types(self):
     """
@@ -181,7 +208,8 @@ uint32 count     # How many elements in the field
         buff.write(struct.pack('<I%sB'%length, length, *_x))
       else:
         buff.write(struct.pack('<I%ss'%length, length, _x))
-      buff.write(_struct_B.pack(self.pc2.is_dense))
+      _x = self
+      buff.write(_struct_B7d.pack(_x.pc2.is_dense, _x.guess.position.x, _x.guess.position.y, _x.guess.position.z, _x.guess.orientation.x, _x.guess.orientation.y, _x.guess.orientation.z, _x.guess.orientation.w))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -195,6 +223,8 @@ uint32 count     # How many elements in the field
         self.pc1 = sensor_msgs.msg.PointCloud2()
       if self.pc2 is None:
         self.pc2 = sensor_msgs.msg.PointCloud2()
+      if self.guess is None:
+        self.guess = geometry_msgs.msg.Pose()
       end = 0
       _x = self
       start = end
@@ -299,9 +329,10 @@ uint32 count     # How many elements in the field
         self.pc2.data = str[start:end].decode('utf-8')
       else:
         self.pc2.data = str[start:end]
+      _x = self
       start = end
-      end += 1
-      (self.pc2.is_dense,) = _struct_B.unpack(str[start:end])
+      end += 57
+      (_x.pc2.is_dense, _x.guess.position.x, _x.guess.position.y, _x.guess.position.z, _x.guess.orientation.x, _x.guess.orientation.y, _x.guess.orientation.z, _x.guess.orientation.w,) = _struct_B7d.unpack(str[start:end])
       self.pc2.is_dense = bool(self.pc2.is_dense)
       return self
     except struct.error as e:
@@ -375,7 +406,8 @@ uint32 count     # How many elements in the field
         buff.write(struct.pack('<I%sB'%length, length, *_x))
       else:
         buff.write(struct.pack('<I%ss'%length, length, _x))
-      buff.write(_struct_B.pack(self.pc2.is_dense))
+      _x = self
+      buff.write(_struct_B7d.pack(_x.pc2.is_dense, _x.guess.position.x, _x.guess.position.y, _x.guess.position.z, _x.guess.orientation.x, _x.guess.orientation.y, _x.guess.orientation.z, _x.guess.orientation.w))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -390,6 +422,8 @@ uint32 count     # How many elements in the field
         self.pc1 = sensor_msgs.msg.PointCloud2()
       if self.pc2 is None:
         self.pc2 = sensor_msgs.msg.PointCloud2()
+      if self.guess is None:
+        self.guess = geometry_msgs.msg.Pose()
       end = 0
       _x = self
       start = end
@@ -494,9 +528,10 @@ uint32 count     # How many elements in the field
         self.pc2.data = str[start:end].decode('utf-8')
       else:
         self.pc2.data = str[start:end]
+      _x = self
       start = end
-      end += 1
-      (self.pc2.is_dense,) = _struct_B.unpack(str[start:end])
+      end += 57
+      (_x.pc2.is_dense, _x.guess.position.x, _x.guess.position.y, _x.guess.position.z, _x.guess.orientation.x, _x.guess.orientation.y, _x.guess.orientation.z, _x.guess.orientation.w,) = _struct_B7d.unpack(str[start:end])
       self.pc2.is_dense = bool(self.pc2.is_dense)
       return self
     except struct.error as e:
@@ -504,8 +539,8 @@ uint32 count     # How many elements in the field
 
 _struct_I = genpy.struct_I
 _struct_IBI = struct.Struct("<IBI")
-_struct_B = struct.Struct("<B")
 _struct_3I = struct.Struct("<3I")
+_struct_B7d = struct.Struct("<B7d")
 _struct_B3I = struct.Struct("<B3I")
 _struct_B2I = struct.Struct("<B2I")
 _struct_2I = struct.Struct("<2I")
@@ -642,6 +677,6 @@ _struct_I = genpy.struct_I
 _struct_7d = struct.Struct("<7d")
 class ICPTransform(object):
   _type          = 'icp_service/ICPTransform'
-  _md5sum = '96542abf6d6b952730bdafa910563cb8'
+  _md5sum = '1adbbab667d04226f31e61c40fd00ae8'
   _request_class  = ICPTransformRequest
   _response_class = ICPTransformResponse
