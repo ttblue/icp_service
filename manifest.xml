@@ -1,0 +1,18 @@
+<package>
+  <description brief="icp_service">
+
+     icp_service
+
+  </description>
+  <author>Sibi Venkatesan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/icp_service</url>
+  <depend package="roscpp"/>
+  <depend package="sensor_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="tf"/>
+  <depend package="eigen_conversions"/>
+</package>
+
+

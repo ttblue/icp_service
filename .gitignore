@@ -11,3 +11,11 @@
 *.lai
 *.la
 *.a
+
+# Build files
+*bin/*
+*build/*
+*Makefile
+*srv_gen*
+
+
