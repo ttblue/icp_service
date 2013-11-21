@@ -1,12 +1,9 @@
 #include <iostream>
 
-#include <pcl/io/pcd_io.h>
-#include <pcl/point_types.h>
-#include <pcl/registration/icp.h>
-
 #include <ros/ros.h>
 #include <eigen_conversions/eigen_msg.h>
 
+#include "pcl_icp.h"
 #include "icp_service/ICPTransform.h"
 
 typedef pcl::PointXYZRGB ColorPoint;
@@ -15,33 +12,19 @@ typedef pcl::PointCloud<ColorPoint> ColorCloud;
 bool findICPTransform (icp_service::ICPTransform::Request &req,
 			 icp_service::ICPTransform::Response &res) {
 
+
   ColorCloud::Ptr cloud_in(new ColorCloud);
   ColorCloud::Ptr cloud_out(new ColorCloud);
   pcl::fromROSMsg(req.pc1, *cloud_in);
   pcl::fromROSMsg(req.pc2, *cloud_out);
 
-  Eigen::Affine3d guess_tfm;
+  Eigen::Affine3d guess_tfm, found_tfm;
   tf::poseMsgToEigen(req.guess,guess_tfm);
-  Eigen::Matrix4f icp_guess;
-  icp_guess.block(0,0,3,3) = guess_tfm.linear().cast<float>().transpose();
-  icp_guess.block(0,3,3,1) = guess_tfm.translation().cast<float>();
-  
 
-  pcl::IterativeClosestPoint<ColorPoint, ColorPoint> icp;
-  icp.setInputCloud(cloud_in);
-  icp.setInputTarget(cloud_out);
-  ColorCloud Final;
-  icp.align(Final, icp_guess);
+  bool succ = ICPTransform (cloud_in, cloud_out, guess_tfm, found_tfm); 
 
-  std::cout << "has converged:" << icp.hasConverged() << " score: " << icp.getFitnessScore() << std::endl;
-
-  Eigen::Matrix4f icpTfm = icp.getFinalTransformation();
-  Eigen::Affine3d tfm;
-  tfm.linear() = icpTfm.cast<double>().transpose().block(0,0,3,3);
-  tfm.translation() = icpTfm.cast<double>().block(0,3,3,1);;
-
-  tf::poseEigenToMsg(tfm, res.pose);
-  return icp.hasConverged();
+  tf::poseEigenToMsg(found_tfm, res.pose);
+  return succ;
 }
 
 int main(int argc, char *argv[])
