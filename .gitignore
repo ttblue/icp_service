@@ -17,5 +17,7 @@
 *build/*
 *Makefile
 *srv_gen*
-
+*cmake_install.cmake
+*CMakeFiles/*
+*CMakeCache.txt
 

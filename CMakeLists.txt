@@ -33,7 +33,7 @@ rosbuild_gensrv()
 #rosbuild_add_boost_directories()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 rosbuild_add_executable(icp_service nodes/ICPService.cpp)
-target_link_libraries(icp_service ${PCL_LIBRARIES} $ENV{HOME}/sandbox/pcl_icp/lib/pcl_icp)
+target_link_libraries(icp_service ${PCL_LIBRARIES})
 
 #rosbuild_add_executable(test1 nodes/test1.cpp)
 #target_link_libraries(test1 ${PCL_LIBRARIES})
