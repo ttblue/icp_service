@@ -13,6 +13,5 @@
   <depend package="geometry_msgs"/>
   <depend package="tf"/>
   <depend package="eigen_conversions"/>
+  <depend package="pcl_conversions"/>
 </package>
-
-

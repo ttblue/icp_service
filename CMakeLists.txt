@@ -17,7 +17,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 
-find_package(PCL 1.6 REQUIRED)
+find_package(PCL 1.7 REQUIRED)
 include_directories(SYSTEM ${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
@@ -34,6 +34,10 @@ rosbuild_gensrv()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 rosbuild_add_executable(icp_service nodes/ICPService.cpp)
 target_link_libraries(icp_service ${PCL_LIBRARIES})
+
+rosbuild_add_executable(ls_service nodes/LSService.cpp)
+target_link_libraries(ls_service ${PCL_LIBRARIES})
+
 
 #rosbuild_add_executable(test1 nodes/test1.cpp)
 #target_link_libraries(test1 ${PCL_LIBRARIES})

@@ -2,22 +2,24 @@
 
 #include <ros/ros.h>
 #include <eigen_conversions/eigen_msg.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
-//#include <pcl/registration/bfgs.h>
-#include <pcl/registration/impl/gicp.hpp>
+#include <pcl/registration/gicp.h>
 #include <pcl/registration/transformation_estimation_point_to_plane_lls.h>
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
-
-#include "icp_service/ICPTransform.h"
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/filters/voxel_grid.h>
+
+
+#include "icp_service/ICPTransform.h"
 
 typedef pcl::PointXYZ ColorPoint;
 typedef pcl::PointCloud<ColorPoint> ColorCloud;
+typedef pcl::PointCloud<pcl::PointXYZRGB> RGBCloud;
 typedef pcl::registration::TransformationEstimationPointToPlaneLLS<pcl::PointNormal, pcl::PointNormal> PointToPlane;
-
 
 
 boost::shared_ptr<pcl::visualization::PCLVisualizer> View1 ()  {
@@ -30,13 +32,30 @@ boost::shared_ptr<pcl::visualization::PCLVisualizer> View1 ()  {
 
 
 bool findICPTransform (icp_service::ICPTransform::Request &req,
-			 icp_service::ICPTransform::Response &res) {
+		       icp_service::ICPTransform::Response &res) {
 
 
+  pcl::PCLPointCloud2 cloud_in_PCLP2, cloud_out_PCLP2;
   ColorCloud::Ptr cloud_in(new ColorCloud);
   ColorCloud::Ptr cloud_out(new ColorCloud);
-  pcl::fromROSMsg(req.pc1, *cloud_in);
-  pcl::fromROSMsg(req.pc2, *cloud_out);
+
+  //sensor_msgs::PointCloud2 pc1 = req.pc1, pc2 = req.pc2;
+  pcl_conversions::toPCL(req.pc1, cloud_in_PCLP2);
+  pcl_conversions::toPCL(req.pc2, cloud_out_PCLP2);
+
+  pcl::fromPCLPointCloud2(cloud_in_PCLP2, *cloud_in);
+  pcl::fromPCLPointCloud2(cloud_out_PCLP2, *cloud_out);
+
+  /**
+  pcl::VoxelGrid<ColorCloud> sor1,sor2;
+  sor1.setInputCloud (cloud_in);
+  sor1.setLeafSize (0.005f, 0.005f, 0.005f);
+  sor1.filter (*cloud_in);
+
+  sor2.setInputCloud (cloud_out);
+  sor2.setLeafSize (0.005f, 0.005f, 0.005f);
+  sor2.filter (*cloud_out);
+  **/
 
   //boost::shared_ptr<pcl::visualization::PCLVisualizer>  viewer = View1();
   //viewer->addPointCloud<pcl::PointXYZ> (cloud_in, "cloud_in");
@@ -44,7 +63,7 @@ bool findICPTransform (icp_service::ICPTransform::Request &req,
   //while (!viewer->wasStopped ())
   //viewer->spinOnce (100);
 
-
+    
   Eigen::Affine3d guess_tfm, found_tfm;
   tf::poseMsgToEigen(req.guess,guess_tfm);
 
@@ -54,7 +73,7 @@ bool findICPTransform (icp_service::ICPTransform::Request &req,
   
 
   pcl::GeneralizedIterativeClosestPoint<ColorPoint, ColorPoint> icp;
-  icp.setInputCloud(cloud_in);
+  icp.setInputSource(cloud_in);
   icp.setInputTarget(cloud_out);
 
 
