@@ -301,13 +301,15 @@ bool findLSTransform(icp_service::LSTransform::Request &req,
   pcl::transformPointCloud (*cloud2, *cloud2, icp_guess);
 
   // Find least squares transform.
-  Matrix4f finalTfm = fitLSTransform (cloud1, cloud2);
+  Matrix4f finalTfm = fitLSTransform (cloud1, cloud2)*icp_guess;
 
   Affine3d found_tfm;
   found_tfm.linear() = finalTfm.cast<double>().block(0,0,3,3);
   found_tfm.translation() = finalTfm.cast<double>().block(0,3,3,1);;
   tf::poseEigenToMsg(found_tfm, res.pose);
 
+  cout << " Initial guess:\n"<< icp_guess<<"\n Final transform:\n"<<finalTfm<<endl;
+  
   return true; 
 
 }
